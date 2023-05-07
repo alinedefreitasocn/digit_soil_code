@@ -10,6 +10,8 @@ by the amount of DOC assimilated, times the carbon use
 (or microbial growth) efficiency, minus
 biomass death and enzyme production
 """
+import numpy as np
+import pandas as pd
 
 # start by creating a class Soil to run the model
 class Soil:
@@ -68,3 +70,35 @@ class Soil:
         """
         mic = (assim * cue) - death - eprod
         pass
+
+class conventional_model():
+    def __init__(self, init_param):
+        """
+        Initial paramentes as dictionary
+        """
+        self.params = init_param
+        self.temp = np.arange(20, 25, 0.3)
+
+    def dynamics(self):
+        """
+        returns the value of kDOC along temperature variation
+        as a df with temperature and kdoc related to temp
+        """
+        df = pd.DataFrame({'temp': self.temp})
+        # the gas denominator will be the same for the
+        # 3 equations
+        gas = self.params['gas_const']*(df['temp'] + 273)
+
+        df['kdoc'] = self.params['kDOC_0'] * \
+            np.exp(-self.params['Ea_DOC']/gas)
+
+        df['kSOC'] = self.params['kSOC_0'] * \
+            np.exp(-self.params['Ea_SOC']/gas)
+
+        df['kMIC'] = self.params['kMIC_0'] * \
+            np.exp(-self.params['Ea_MIC']/gas)
+
+        # dSOC/dt
+
+        self.dynamics = df
+        return df
