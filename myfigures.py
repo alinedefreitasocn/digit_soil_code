@@ -16,5 +16,5 @@ def paper_fig():
     # left bottom corner (0.1,0.1), and the size 
     # parameters (0.5,0.8)
     axs.tick_params(axis='both',labelsize=15)
-    plt.show()
-    return axs, fig
+    #plt.show()
+    return fig, axs

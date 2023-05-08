@@ -52,3 +52,4 @@ spinup_conventional = {
                     'MICtoSOC': 0.5,
                     'gas_const': 0.008314
                     }
+

@@ -12,9 +12,10 @@ biomass death and enzyme production
 """
 import numpy as np
 import pandas as pd
+from myfigures import paper_fig
 
 # start by creating a class Soil to run the model
-class Soil:
+class EnzymeModel:
     def __init__(self, SOC, DOC, MIC, ENZ):
         self.doc = DOC
         self.soc = SOC
@@ -74,10 +75,10 @@ class Soil:
 class conventional_model():
     def __init__(self, init_param):
         """
-        Initial paramentes as dictionary
+        Initial paramentes as dictionary or DataFrame
         """
         self.params = init_param
-        self.temp = np.arange(20, 25, 0.3)
+        self.temp = np.linspace(0, 25, 100)
 
     def dynamics(self):
         """
@@ -102,3 +103,6 @@ class conventional_model():
 
         self.dynamics = df
         return df
+    
+    def cue_decay(self):
+        cue = 0.63 - 0.016*(self.temp + 273)
