@@ -10,17 +10,38 @@ by the amount of DOC assimilated, times the carbon use
 (or microbial growth) efficiency, minus
 biomass death and enzyme production
 """
+from distutils.cygwinccompiler import Mingw32CCompiler
 import numpy as np
 import pandas as pd
+# importing fuction to create hight quality figtures
 from myfigures import paper_fig
+# importing initial parameters
+import running_spinup
 
 # start by creating a class Soil to run the model
 class EnzymeModel:
-    def __init__(self, SOC, DOC, MIC, ENZ):
-        self.doc = DOC
-        self.soc = SOC
-        self.mic = MIC
-        self.enz = ENZ
+    def __init__(self):
+        self.init_params = running_spinup.init_params()
+    
+    def dynamics(self):
+        """
+        input is self parameters and index?? So everytime it changes
+        """
+        # enzyme production
+        self.eprod = r_enz_prod * mic
+        # microbial biomass death
+        self.death = r_death * mic
+        # assimilation as Michaelis-Menten function
+        self.assim = v_max_uptake * mic * (doc/(km_uptake + doc))
+        pass
+
+    def d_mic(self):
+        """
+        should count the variation of mic with time
+        """
+        # microbial biomass change
+        d_mic = assim * cue - death - eprod
+        pass
 
     def MME(self):
         """
