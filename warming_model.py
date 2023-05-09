@@ -22,7 +22,7 @@ import running_spinup
 class EnzymeModel:
     def __init__(self):
         self.init_params = running_spinup.init_params()
-    
+
     def dynamics(self):
         """
         input is self parameters and index?? So everytime it changes
@@ -33,7 +33,7 @@ class EnzymeModel:
         self.death = r_death * mic
         # assimilation as Michaelis-Menten function
         self.assim = v_max_uptake * mic * (doc/(km_uptake + doc))
-        pass
+        return mic, doc
 
     def d_mic(self):
         """
@@ -124,6 +124,6 @@ class conventional_model():
 
         self.dynamics = df
         return df
-    
+
     def cue_decay(self):
         cue = 0.63 - 0.016*(self.temp + 273)
