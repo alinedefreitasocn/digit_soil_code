@@ -22,27 +22,39 @@ by the amount of DOC assimilated, times the carbon use
 (or microbial growth) efficiency, minus
 biomass death and enzyme production
 """
-from symbol import parameters
+
 import numpy as np
 import pandas as pd
 
+def set_time_temp(params):
+    """
+    Creating df with date and time
+    """
+    ## Creating a temperature and time range
+    time = np.arange(0, params['endtime'], params['step_time'])
+    tt = {'temp': np.linspace(20, 25, len(time)),
+          'time': time}
+    df_tt = pd.DataFrame(tt).set_index('time')
+    return df_tt
+
+
 # modeling the parameters that are regulated by the temperature
-def temperature_regulating(params, temp):
+def temperature_regulating(params, df_tt):
     """
     Input: params: initial parameters as a dictionary
     temp: temperatura array varying from 20 to 25
 
     returns dataframe with temperature as index
     """
-    df = {}
-    df['km'] = params['km_slope'] * temp + params['km_0']
-    df['v_max_uptake'] = params['v_max_uptake_0'] * \
-        np.exp(-params['Ea_uptake']/(params['gas_const'] *(temp + 273)))
+    
+    df_tt['km'] = params['km_slope'] * df_tt['temp'] + params['km_0']
+    df_tt['v_max_uptake'] = params['v_max_uptake_0'] * \
+        np.exp(-params['Ea_uptake']/(params['gas_const'] *(df_tt['temp'] + 273)))
 
-    df['km_uptake'] = params['km_uptake_slope'] * temp + params['km_uptake_0']
-    df['cue'] = params['cue_slope'] * temp + params['cue_0']
-    df = pd.DataFrame(df, index=temp)
-    return df
+    df_tt['km_uptake'] = params['km_uptake_slope'] * df_tt['temp'] + params['km_uptake_0']
+    df_tt['cue'] = params['cue_slope'] * df_tt['temp'] + params['cue_0']
+    df_tt['v_max'] = params['v_max_0'] * \
+        np.exp(-params['Ea']/(params['gas_const'] * (df_tt['temp'] + 273)))
 
 def dynamics(df):
     """ 
@@ -56,7 +68,7 @@ def dynamics(df):
     ----------
     None. Add new column to input DataFrame
     """
-    df['assim'] = df['v_max_uptake'] * mic * (doc/(df['km_uptake'] + doc))
+    
 
 def derivatives(params, df):
     """
@@ -64,13 +76,34 @@ def derivatives(params, df):
     Set the initial values and update it on every iterations.
     Save on my df
     """
+    # seting mic, soc and doc to its initial parameters
     df['mic'] = params['initMIC']
-    df['soc'] = params['initSOC']
     df['doc'] = params['initDOC']
+    df['co2'] = 1
+    # df['assim'] = 1
     
-    for t in df.index:
-        pass
-    pass
+    for t in df.index[:-1]:
+        # dMIC/dt
+        assim = df.loc[t, 'v_max_uptake'] * \
+            df.loc[t, 'mic'] * (df.loc[t, 'doc']/ \
+                                (df.loc[t, 'km_uptake'] + df.loc[t, 'doc']))
+        # assigning assim to the next time step
+        # probably wont be necessary for this one
+        # df.loc[t + params['step_time'], 'assim'] = assim
+
+        # r_death and r_enz_prod are constant
+        death = params['r_death'] * df.loc[t, 'mic']
+        eprod = params['r_enz_prod'] * df.loc[t, 'mic']
+
+        mic = assim * df.loc[t, 'cue'] - death - eprod
+        df.loc[t + params['step_time'], 'mic'] = mic
+        # MIC = assim * cue - death - eprod
+
+        co2 = assim * (1 - df.loc[t, 'cue'])
+        df.loc[t + params['step_time'], 'co2'] = co2
+        # dSOC/dt
+        #soc = params['inputSOC'] + death * params['MICtoSOC'] - decomp
+    
 
 
 

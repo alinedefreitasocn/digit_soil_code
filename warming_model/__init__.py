@@ -11,7 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-print('starting model')
+print('Importing initial parameter for warming model')
 # creating a dictionary with the initial
 # values for spinup model
 # those values were taken from Allison et al., 2010
@@ -122,5 +122,4 @@ params_conventional_default = {
                 'gas_const': 0.008314
             } 
 
-## Creating a temperature range
-temp = np.linspace(0, 50, 1000)
+
