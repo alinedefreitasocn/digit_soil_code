@@ -22,6 +22,7 @@ by the amount of DOC assimilated, times the carbon use
 (or microbial growth) efficiency, minus
 biomass death and enzyme production
 """
+from symbol import parameters
 import numpy as np
 import pandas as pd
 
@@ -56,6 +57,20 @@ def dynamics(df):
     None. Add new column to input DataFrame
     """
     df['assim'] = df['v_max_uptake'] * mic * (doc/(df['km_uptake'] + doc))
+
+def derivatives(params, df):
+    """
+    Running the time derivatives
+    Set the initial values and update it on every iterations.
+    Save on my df
+    """
+    df['mic'] = params['initMIC']
+    df['soc'] = params['initSOC']
+    df['doc'] = params['initDOC']
+    
+    for t in df.index:
+        pass
+    pass
 
 
 

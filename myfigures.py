@@ -10,11 +10,18 @@ def paper_fig():
     mpl.rcParams['ps.fonttype'] = 42
     mpl.rcParams['font.family'] = 'Arial'
 
-    fig, axs = plt.subplots(figsize=(10,6), 
-                           dpi=300)
+    # creating publication quality figures
+    fig, axs = plt.subplots(figsize=(10, 6), 
+                            dpi=300, 
+                            nrows=3, 
+                            ncols=2)
+    # fig, axs = plt.subplots(figsize=(10,6), 
+    #                        dpi=300)
     # This figure is positioned by its anchor point, 
     # left bottom corner (0.1,0.1), and the size 
     # parameters (0.5,0.8)
-    axs.tick_params(axis='both',labelsize=15)
+    #axs[:].tick_params(axis='both',labelsize=15)
     #plt.show()
     return fig, axs
+
+
