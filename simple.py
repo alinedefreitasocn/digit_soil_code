@@ -28,7 +28,7 @@ params = {
                 'Ea_uptake': 47,
                 'gas_const': 0.008314
             }
-temp = np.linspace(20, 25, 100)
+temp = np.linspace(0, 100, 1000)
 # temperature varying
 def temperature_regulating(params, temp):
     """
@@ -39,10 +39,10 @@ def temperature_regulating(params, temp):
     """
     df = {}
     df['km'] = params['km_slope'] * temp + params['km_0']
-    df['v_max_uptake'] = params['v_max_uptake'] * \
+    df['v_max_uptake'] = params['v_max_uptake_0'] * \
         np.exp(-params['Ea_uptake']/(params['gas_const'] *(temp + 273)))
 
-    df['km_uptake'] = params['km_uptake_slope'] * temp + params['km_uptake']
+    df['km_uptake'] = params['km_uptake_slope'] * temp + params['km_uptake_0']
     df['cue'] = params['cue_slope'] * temp + params['cue_0']
     df = pd.DataFrame(df, index=temp)
     return df
