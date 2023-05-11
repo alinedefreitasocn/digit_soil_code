@@ -76,7 +76,7 @@ params_enzyme_default = {
 # values taken from Alisson et al., 2010
 params_conventional_spinup = {
     'endtime': 10000000,
-    'interval': 100000,
+    'step_time': 100000,
     'temp_init': 20,
     'initSOC': 100,
     'initDOC': 0.5,

@@ -23,6 +23,7 @@ by the amount of DOC assimilated, times the carbon use
 biomass death and enzyme production
 """
 
+from socket import SOCK_CLOEXEC
 import numpy as np
 import pandas as pd
 
@@ -105,8 +106,31 @@ def derivatives(params, df):
         #soc = params['inputSOC'] + death * params['MICtoSOC'] - decomp
     
 
+def conventional_model(params, df):
+    pass
 
+def conventional_temp_sense(params, df):
 
+    df['soc'] = params['initSOC']
+    df['doc'] = params['initDOC']
+    df['mic'] = params['initMIC']
+
+    for t in df.index[:-1]:
+        kdoc = params['kDOC_0'] * \
+            np.exp(-params['Ea_DOC']/params['gas_const'] * (df.loc[t, 'temp'] + 273))
+        ksoc = params['kSOC_0'] * \
+            np.exp(-params['Ea_SOC']/params['gas_const'] * (df.loc[t, 'temp'] + 273))
+        kmic = params['kMIC_0'] * \
+            np.exp(-params['Ea_MIC']/params['gas_const'] * (df.loc[t, 'temp'] + 273))
+        
+        soc_dec = ksoc * df.loc[t, 'soc'] 
+        doc_dec = kdoc * df.loc[t, 'doc'] 
+        death = kmic * df.loc[t, 'mic'] 
+
+        soc = params['inputSOC'] + params['DOCtoSOC'] * doc_dec \
+        + params['MICtoOC'] * params['MICtoSOC'] * death - soc_dec
+        
+        df.loc[t + params['step_time'], 'soc'] = soc
 
 
 
