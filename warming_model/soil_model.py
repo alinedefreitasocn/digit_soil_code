@@ -1,6 +1,6 @@
 """
 PLAN B
-A python class just in case my model is not working at 
+A python class just in case my model is not working at
 all and I still
 need to show some of my best results to the team
 """
@@ -23,6 +23,8 @@ by the amount of DOC assimilated, times the carbon use
 biomass death and enzyme production
 """
 
+# python PDE
+
 from socket import SOCK_CLOEXEC
 import numpy as np
 import pandas as pd
@@ -38,6 +40,8 @@ def set_time_temp(params):
     df_tt = pd.DataFrame(tt).set_index('time')
     return df_tt
 
+# taking just the time, we don't know how temperature varies
+time = np.arange(0, params['endtime'], params['step_time'])
 
 # modeling the parameters that are regulated by the temperature
 def temperature_regulating(params, df_tt):
@@ -47,7 +51,7 @@ def temperature_regulating(params, df_tt):
 
     returns dataframe with temperature as index
     """
-    
+
     df_tt['km'] = params['km_slope'] * df_tt['temp'] + params['km_0']
     df_tt['v_max_uptake'] = params['v_max_uptake_0'] * \
         np.exp(-params['Ea_uptake']/(params['gas_const'] *(df_tt['temp'] + 273)))
@@ -58,7 +62,7 @@ def temperature_regulating(params, df_tt):
         np.exp(-params['Ea']/(params['gas_const'] * (df_tt['temp'] + 273)))
 
 def dynamics(df):
-    """ 
+    """
     Adds a column to df with the assimilation values
 
     input:
@@ -69,7 +73,7 @@ def dynamics(df):
     ----------
     None. Add new column to input DataFrame
     """
-    
+
 
 def derivatives(params, df):
     """
@@ -82,7 +86,7 @@ def derivatives(params, df):
     df['doc'] = params['initDOC']
     df['co2'] = 1
     # df['assim'] = 1
-    
+
     for t in df.index[:-1]:
         # dMIC/dt
         assim = df.loc[t, 'v_max_uptake'] * \
@@ -104,7 +108,7 @@ def derivatives(params, df):
         df.loc[t + params['step_time'], 'co2'] = co2
         # dSOC/dt
         #soc = params['inputSOC'] + death * params['MICtoSOC'] - decomp
-    
+
 
 def conventional_model(params, df):
     pass
@@ -122,16 +126,22 @@ def conventional_temp_sense(params, df):
             np.exp(-params['Ea_SOC']/params['gas_const'] * (df.loc[t, 'temp'] + 273))
         kmic = params['kMIC_0'] * \
             np.exp(-params['Ea_MIC']/params['gas_const'] * (df.loc[t, 'temp'] + 273))
-        
-        soc_dec = ksoc * df.loc[t, 'soc'] 
-        doc_dec = kdoc * df.loc[t, 'doc'] 
-        death = kmic * df.loc[t, 'mic'] 
 
-        soc = params['inputSOC'] + params['DOCtoSOC'] * doc_dec \
-        + params['MICtoOC'] * params['MICtoSOC'] * death - soc_dec
-        
-        df.loc[t + params['step_time'], 'soc'] = soc
+        soc_dec = ksoc * df.loc[t, 'soc']
+        doc_dec = kdoc * df.loc[t, 'doc']
+        death = kmic * df.loc[t, 'mic']
 
+        soc = (params['inputSOC'] + params['DOCtoSOC'] * \
+               doc_dec + params['MICtoOC'] * params['MICtoSOC'] * death - soc_dec)
+        # adding new soc to df
+        df.loc[t + params['step_time'], 'soc'] = soc * params['step_time']
 
+        doc = (params['inputDOC'] + params['SOCtoDOC'] * \
+               soc_dec + params['MICtoOC'] * (1 - params['MICtoSOC']) \
+                * death - params['f_uptake'] * df.loc[t, 'doc'] - doc_dec)
+        # adding new doc to df
+        df.loc[t + params['step_time'], 'doc'] = doc * params['step_time']
 
-
+        mic = params['f_uptake'] * df.loc[t, 'doc'] - death
+        # adding new mic to df
+        df.loc[t + params['step_time'], 'mic'] = mic * params['step_time']
