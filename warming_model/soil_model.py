@@ -29,16 +29,16 @@ from socket import SOCK_CLOEXEC
 import numpy as np
 import pandas as pd
 
-def set_time_temp(params):
-    """
-    Creating df with date and time
-    """
-    ## Creating a temperature and time range
-    time = np.arange(0, params['endtime'], params['step_time'])
-    tt = {'temp': np.linspace(20, 25, len(time)),
-          'time': time}
-    df_tt = pd.DataFrame(tt).set_index('time')
-    return df_tt
+# def set_time_temp(params):
+#     """
+#     Creating df with date and time
+#     """
+#     ## Creating a temperature and time range
+#     time = np.arange(0, params['endtime'], params['step_time'])
+#     tt = {'temp': np.linspace(20, 25, len(time)),
+#           'time': time}
+#     df_tt = pd.DataFrame(tt).set_index('time')
+#     return df_tt
 
 # taking just the time, we don't know how temperature varies
 time = np.arange(0, params['endtime'], params['step_time'])

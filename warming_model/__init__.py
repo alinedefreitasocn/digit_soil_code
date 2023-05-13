@@ -2,16 +2,18 @@
 Warming model by Allison et al., 2010
 =====================================
 
-Defining the initial parameters and importing the necessary 
+Defining the initial parameters and importing the necessary
 packages to use.
 
 """
 # importing packages
-import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
-
-print('Importing initial parameter for warming model')
+print('======================================')
+print('\n')
+print('           Warming Soil               ')
+print('\n')
+print('======================================')
+print('\n')
+print('Importing initial parameter for warming soil model')
 # creating a dictionary with the initial
 # values for spinup model
 # those values were taken from Allison et al., 2010
@@ -120,6 +122,4 @@ params_conventional_default = {
                 'MICtoOC': 0.2,
                 'MICtoSOC': 0.5,
                 'gas_const': 0.008314
-            } 
-
-
+            }

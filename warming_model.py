@@ -14,7 +14,7 @@ from distutils.cygwinccompiler import Mingw32CCompiler
 import numpy as np
 import pandas as pd
 # importing fuction to create hight quality figtures
-from myfigures import paper_fig
+from warming_model.myfigures import paper_fig
 # importing initial parameters
 import running_spinup
 
