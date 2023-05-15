@@ -6,10 +6,9 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator,FormatStrFormatter,MaxNLocator
 import numpy as np
 
-x = np.array([0, 1, 2, 3, 4, 5])
-y = x**2
 
-def paper_fig():
+
+def paper_fig(nrows=5, ncols=3):
     mpl.rcParams['pdf.fonttype'] = 42
     mpl.rcParams['ps.fonttype'] = 42
     mpl.rcParams['font.family'] = 'Arial'
@@ -17,31 +16,39 @@ def paper_fig():
     # creating publication quality figures
     fig, axs = plt.subplots(figsize=(9, 11),
                             dpi=300,
-                            nrows=5,
-                            ncols=3)
+                            nrows=nrows,
+                            ncols=ncols)
                             #layout="constrained")
-    # fig.tight_layout(pad=2.0)
-    axs[0,0].plot(x, y, label='blah', color='k', linewidth = 0.5)
-    axs[0, 0].legend(title='Base Model',
-                     bbox_to_anchor=(0.7, 1.8)
-                     ).get_frame().set_linewidth(0.0)
-    axs[0,1].plot(x, y, label='blah', color='k', linewidth=0.5)
-    axs[0, 1].legend(title='Enzyme Model',
-                     bbox_to_anchor=(0.7, 1.8)
-                     ).get_frame().set_linewidth(0.0)
 
-    for ax in fig.axes:
-        ax.set_xlabel('years')
-    # , title_fontsize=30
-    # fig, axs = plt.subplots(figsize=(10,6),
-    #                        dpi=300)
-    # This figure is positioned by its anchor point,
-    # left bottom corner (0.1,0.1), and the size
-    # parameters (0.5,0.8)
-    #axs[:].tick_params(axis='both',labelsize=15)
-    #plt.show()
+    # adjusting the size of the figure to fit the legend outside of plot
+    plt.subplots_adjust(top=0.9, wspace = 0.7, hspace = 0.5)
 
     return fig, axs
-plt.subplots_adjust(top=0.9, wspace = 0.7, hspace = 0.5)
-fig.savefig('test.pdf', dpi=300)
-plt.close('all')
+
+def adjust_figure(fig, ax):
+    """
+    Adjusting the figure after plot and saving as pdf
+    """
+    xtick_loc = [0, 24*365*10, 24*365*20, 24*365*30]
+    xtick_labels = [0, 10, 20, 30]
+    
+    
+    for axs in fig.axes:
+        # setting the same xtick labels
+        axs.set_xticks(xtick_loc, labels=xtick_labels)
+        axs.set_xlabel('years')
+
+
+    ax[0, 0].legend(title='Base Model',
+                     bbox_to_anchor=(0.7, 1.8)
+                     ).get_frame().set_linewidth(0.0)
+    ax[0, 1].legend(title='Enzyme Acclimation',
+                     bbox_to_anchor=(0.7, 1.8)
+                     ).get_frame().set_linewidth(0.0)
+    ax[0, 2].legend(title='Change Input',
+                     bbox_to_anchor=(0.7, 1.8)
+                     ).get_frame().set_linewidth(0.0)
+    
+
+    fig.savefig('figure_example.pdf', dpi=300)
+    plt.close('all')
