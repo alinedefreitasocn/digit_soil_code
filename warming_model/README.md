@@ -8,3 +8,5 @@ it will start the variables with the initial parameters that can be called as
 
 From `warming_model` we can initiate the `soil_model` as
 ```from warming_model import soil_model```
+
+The output can be saved as a CSV. Soil model also generates a figure in PDF.
